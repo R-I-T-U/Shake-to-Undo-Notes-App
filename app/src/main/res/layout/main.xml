@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B567C1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Notes"
+        android:id="@+id/title"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title"
+        android:layout_above="@id/addNote"
+        android:id="@+id/recyclerview"
+        />
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add new note"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/purple_200"
+        android:backgroundTint="@color/white"
+        android:id="@+id/addNote"
+        />
+
+</RelativeLayout>

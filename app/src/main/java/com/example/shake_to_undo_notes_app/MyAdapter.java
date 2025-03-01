@@ -1,7 +1,11 @@
 package com.example.shake_to_undo_notes_app;
 
+import static com.example.shake_to_undo_notes_app.MainActivity.REQUEST_CODE_EDIT_NOTE;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +45,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.desc.setText(note.getDesc());
         holder.time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(note.getTime()));
 
+        //delete on long click
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -67,6 +72,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 return true;
             }
         });
+
+        // edit on click
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Note note = notes.get(position);
+                Intent i = new Intent(context, addNoteActivity.class);
+                i.putExtra("note_title", note.getTitle());
+                i.putExtra("note_desc", note.getDesc());
+                i.putExtra("note_time", note.getTime());
+                i.putExtra("note_position", position);
+                ((Activity) context).startActivityForResult(i, REQUEST_CODE_EDIT_NOTE);
+            }
+        });
     }
 
     @Override
@@ -85,6 +104,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             recentlyDeletedNote = null; // Clear the stored note
             Toast.makeText(context, "Note restored", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void updateNote(int position, Note updatedNote){
+        notes.set(position, updatedNote);
+        notifyItemChanged(position);
     }
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView title, desc, time;

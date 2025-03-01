@@ -21,6 +21,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_ADD_NOTE = 1;
+    public static final int REQUEST_CODE_EDIT_NOTE = 2;
     RecyclerView recyclerView;
     MyAdapter adapter;
     List<Note> notes;
@@ -89,13 +90,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {
+        if ( resultCode == RESULT_OK) {
             String title = data.getStringExtra("note_title");
             String desc = data.getStringExtra("note_desc");
             long time = data.getLongExtra("note_time", System.currentTimeMillis());
 
-            Note newNote = new Note(title, desc, time);
-            adapter.addNote(newNote);
+            if(requestCode == REQUEST_CODE_ADD_NOTE){
+                Note newNote = new Note(title, desc, time);
+                adapter.addNote(newNote);
+            } else if (requestCode == REQUEST_CODE_EDIT_NOTE) {
+                int position = data.getIntExtra("note_position", -1);
+                if(position != -1){
+                    Note updatedNote = new Note(title, desc, time);
+                    adapter.updateNote(position, updatedNote);
+                }
+            }
+
         }
     }
 }

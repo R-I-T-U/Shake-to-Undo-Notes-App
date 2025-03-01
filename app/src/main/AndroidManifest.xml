@@ -17,7 +17,8 @@
             android:exported="false" />
         <activity
             android:name=".ShakeDetector"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="Instantiatable" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

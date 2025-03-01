@@ -9,11 +9,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_ADD_NOTE = 1;
+    RecyclerView recyclerView;
+    MyAdapter adapter;
+    List<Note> notes;
     MaterialButton mb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        recyclerView = findViewById(R.id.recyclerview);
+        notes = new ArrayList<>();
+        adapter = new MyAdapter(this, notes);
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
+        findViewById(R.id.addNote).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, addNoteActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_ADD_NOTE);
+        });
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {
+            String title = data.getStringExtra("note_title");
+            String desc = data.getStringExtra("note_desc");
+            long time = data.getLongExtra("note_time", System.currentTimeMillis());
+
+            Note newNote = new Note(title, desc, time);
+            adapter.addNote(newNote);
+        }
     }
 }

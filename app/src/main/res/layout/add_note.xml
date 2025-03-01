@@ -51,8 +51,8 @@
             android:layout_height="wrap_content"
             android:text="Save"
             android:layout_gravity="center"
-            android:backgroundTint="@color/white"
-            android:textColor="#B567C1"
+            android:backgroundTint="#EEEEF4"
+            android:textColor="@color/purple_200"
             android:id="@+id/save"
             />
 

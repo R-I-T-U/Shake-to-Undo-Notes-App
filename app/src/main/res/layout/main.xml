@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B567C1">
+    android:background="#B567C1"
+    android:padding="10dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,7 +13,7 @@
         android:id="@+id/title"
         android:textColor="@color/white"
         android:textStyle="bold"
-
+        android:layout_marginHorizontal="150dp"
         />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -22,14 +23,15 @@
         android:layout_above="@id/addNote"
         android:id="@+id/recyclerview"
         />
+
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/addNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add new note"
         android:layout_alignParentBottom="true"
-        android:textColor="@color/purple_200"
         android:backgroundTint="@color/white"
-        android:id="@+id/addNote"
-        />
+        android:text="Add new note"
+        android:textColor="@color/purple_200"
+        android:textSize="25sp" />
 
 </RelativeLayout>

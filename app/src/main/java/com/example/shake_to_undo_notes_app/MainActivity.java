@@ -1,6 +1,8 @@
 package com.example.shake_to_undo_notes_app;
 
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -23,31 +25,68 @@ public class MainActivity extends AppCompatActivity {
     MyAdapter adapter;
     List<Note> notes;
     MaterialButton mb;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private ShakeDetector shakeDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mb= findViewById(R.id.addNote);
 
-        mb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, addNoteActivity.class));
-            }
-        });
-
+        // Initialize views
+        mb = findViewById(R.id.addNote);
         recyclerView = findViewById(R.id.recyclerview);
+
+        // Initialize notes list and adapter
         notes = new ArrayList<>();
         adapter = new MyAdapter(this, notes);
 
+        // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        findViewById(R.id.addNote).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, addNoteActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_ADD_NOTE);
+        // Set up the "Add Note" button
+        mb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, addNoteActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_ADD_NOTE);
+            }
+        });
+
+        // Initialize the shake detector
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        shakeDetector = new ShakeDetector();
+
+        // Set the shake listener
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake() {
+                // Restore the deleted note when the phone is shaken
+                adapter.restoreDeletedNote();
+            }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Register the shake detector when the activity resumes
+        if (accelerometer != null) {
+            sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        // Unregister the shake detector when the activity is paused
+        sensorManager.unregisterListener(shakeDetector);
+        super.onPause();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {

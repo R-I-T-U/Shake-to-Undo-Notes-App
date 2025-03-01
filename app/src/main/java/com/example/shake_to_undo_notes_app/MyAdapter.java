@@ -20,7 +20,8 @@ import java.util.Locale;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private Context context;
     private List<Note> notes;
-
+    private Note recentlyDeletedNote;
+    private int recentlyDeletedNotePosition;
     public MyAdapter(Context context, List<Note> notes) {
         this.context = context;
         this.notes = notes;
@@ -49,6 +50,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         if(item.getTitle().equals("DELETE")){
+                            // Store the deleted note and its position
+                            recentlyDeletedNote = notes.get(position);
+                            recentlyDeletedNotePosition = position;
+
+                            // Remove the note from the list
                            notes.remove(position);
                            notifyItemRemoved(position);
                            notifyItemRangeChanged(position, notes.size()-position);
@@ -67,12 +73,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public int getItemCount() {
         return notes.size();
     }
-
     public void addNote(Note note) {
         notes.add(0, note);
         notifyItemInserted(0);
     }
-
+    public void restoreDeletedNote() {
+        if (recentlyDeletedNote != null) {
+            // Add the note back to its original position
+            notes.add(recentlyDeletedNotePosition, recentlyDeletedNote);
+            notifyItemInserted(recentlyDeletedNotePosition);
+            recentlyDeletedNote = null; // Clear the stored note
+            Toast.makeText(context, "Note restored", Toast.LENGTH_SHORT).show();
+        }
+    }
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView title, desc, time;
 
